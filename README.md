@@ -26,19 +26,62 @@ server.
 
 ## Quick start
 
+A v3 mixin cannot run alone - the composed set needs one kit with
+`kind: workload`, and the built-in `sbx` agents (`shell`, `claude`, …) are not
+v3 kits. This repo ships a minimal [`test/shell-workload`](./test/shell-workload)
+for exactly that. Compose the scanner onto it:
+
 ```sh
-# 1. store your Black Duck API token in the host credential store as `blackduck`
-# 2. compose the scanner onto an agent workload
-sbx run ./<workload> \
+# 1. store your Black Duck API token under the service name `blackduck`
+sbx secret set -g blackduck                       # paste the token when prompted
+
+# 2. compose the scanner onto the workload (run interactively, NOT --detach, so
+#    sbx prompts to bind the `blackduck` credential the first time)
+sbx run ./test/shell-workload \
   --kit ./blackduck-detect \
   --kit-arg blackduck-detect.blackduckHost=bd.acme.com \
-  .
+  --name bd-scan .
+
 # 3. inside the sandbox
 detect --detect.source.path=.
 ```
 
+Step 1 keys the secret to `blackduck` because that is the credential service
+the kit declares; it is injected into the sandbox as `BLACKDUCK_API_TOKEN`. A
+secret under any other name will not be picked up.
+
 See [`blackduck-detect/README.md`](./blackduck-detect/README.md) for full build,
 run, and publish instructions.
+
+## Testing
+
+Smoke-test the published image with no Black Duck key - this proves the kit
+composes and `detect` runs on its bundled JRE (the scan only fails to *connect*,
+which is expected without a real server):
+
+```sh
+sbx run ./test/shell-workload \
+  --kit docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-detect \
+  --detach --name bd-test .
+
+sbx exec bd-test detect --help                    # Detect's option reference → wired up
+sbx exec bd-test sh -c 'command -v detect; echo $BLACKDUCK_URL; echo $JAVA_HOME'
+sbx rm bd-test -f                                 # clean up
+```
+
+With a real instance, add the token and point at your server. Detect's
+connection test validates auth without running a full scan:
+
+```sh
+sbx secret set -g blackduck
+sbx run ./test/shell-workload \
+  --kit ./blackduck-detect \
+  --kit-arg blackduck-detect.blackduckHost=bd.acme.com \
+  --name bd-scan .
+# inside the sandbox:
+detect --detect.test.connection=true              # auth + connectivity check
+detect --detect.source.path=.                     # full scan
+```
 
 ## Published image
 
@@ -54,11 +97,16 @@ docker.io/ajeetraina777/sbx-kits-blackduck:latest
 Consume it straight from the registry, no local build:
 
 ```sh
-sbx run ./<workload> \
+sbx run ./test/shell-workload \
   --kit docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-detect \
-  --kit-arg blackduck-detect.blackduckHost=bd.acme.com \
-  .
+  --name bd-scan .
 ```
+
+The published image bakes the placeholder host, so to aim it at your instance
+add `sbx policy allow network <host>` and pass `detect --blackduck.url=https://<host>`
+at scan time. The `--kit-arg` host override only takes effect when building from
+local source (`--kit ./blackduck-detect`), since a prebuilt image is already
+baked.
 
 Publishing is automated by [`.github/workflows/publish.yml`](./.github/workflows/publish.yml):
 it gates on `kit-tck` conformance, then runs [`scripts/push-kit.sh`](./scripts/push-kit.sh)

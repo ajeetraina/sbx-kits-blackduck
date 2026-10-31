@@ -1,0 +1,12 @@
+# syntax=docker/sandbox-kit:3
+schemaVersion: "3"
+kind: workload
+displayName: Test Shell
+description: >-
+  Minimal v3 shell workload used only to anchor mixin composition when testing.
+  A v3 mixin needs exactly one kit with `kind: workload` in the set to define
+  the sandbox; the built-in `shell`/`claude` agents are not v3 kits, so they
+  cannot fill that role. This is that role, and nothing more.
+version: "1.0.0"
+capabilities:
+  - type: com.docker.sandbox/sbx@1
