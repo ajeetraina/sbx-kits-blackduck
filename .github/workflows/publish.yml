@@ -59,8 +59,11 @@ jobs:
         run: |
           set -euxo pipefail
           go install github.com/docker/sandbox-kit-spec/v3/cmd/kit-tck@latest
+          # The layout must carry a reference tagged with the version, because
+          # kit-tck resolves that tag out of the layout (the last arg below).
           docker buildx build "$KIT_DIR" \
             -f "$KIT_DIR/$KIT_DIR.yaml" \
+            -t "$KIT_DIR:$DETECT_VERSION" \
             --build-arg DETECT_VERSION="$DETECT_VERSION" \
             --build-arg BLACKDUCK_HOST="$BLACKDUCK_HOST" \
             --output type=oci,dest=/tmp/kit-layout,tar=false
