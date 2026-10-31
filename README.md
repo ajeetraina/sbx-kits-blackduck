@@ -9,6 +9,51 @@ coding agents: an agent running in an isolated microVM can scan the project it
 is working on and surface open-source, license, and vulnerability risk without
 leaving the sandbox.
 
+## Architecture
+
+```mermaid
+flowchart LR
+  subgraph Host["Developer host"]
+    SBX["sbx CLI"]
+    CRED["Credential store<br/>(service: blackduck)"]
+    PROXY["Network policy<br/>+ egress proxy"]
+  end
+
+  subgraph VM["Sandbox microVM (composed kit image)"]
+    direction TB
+    WL["v3 workload<br/>(agent / shell)"]
+    subgraph MIX["blackduck-detect mixin (overlay)"]
+      direction TB
+      DET["/usr/local/bin/detect<br/>launcher on PATH"]
+      JAR["/opt/blackduck/detect.jar<br/>Detect 12.1.0"]
+      JRE["/opt/blackduck/jre<br/>bundled Temurin 17"]
+      ENV["env: BLACKDUCK_URL<br/>+ BLACKDUCK_API_TOKEN"]
+    end
+    WS["Mounted workspace<br/>(code to scan)"]
+  end
+
+  BD["Black Duck SCA server"]
+
+  subgraph Build["Build / publish time"]
+    REPO["repo.blackduck.com<br/>detect.jar"]
+    ADO["api.adoptium.net<br/>Temurin JRE"]
+  end
+
+  SBX -->|compose + run| VM
+  CRED -->|inject token| ENV
+  DET --> JAR --> JRE
+  DET -->|scan| WS
+  MIX -->|HTTPS| PROXY -->|allow: blackduckHost| BD
+  REPO -.bundled at build.-> JAR
+  ADO -.bundled at build.-> JRE
+```
+
+At build time the kit bundles the Detect jar (`repo.blackduck.com`) and a
+Temurin JRE (`api.adoptium.net`) into the overlay, so at runtime the sandbox is
+self-contained and its only egress is the Black Duck server. The API token is
+injected from the host credential store as `BLACKDUCK_API_TOKEN` and never
+baked into the image.
+
 ## Kits
 
 | Kit | Kind | What it adds |
