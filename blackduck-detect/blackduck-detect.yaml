@@ -39,13 +39,13 @@ provides: ["blackduck-detect@${{ kit.args.version }}"]
 
 # No requires: the overlay bundles its own JRE and the Detect jar, so it needs
 # nothing from the base beyond the §12 platform floor (sh, a CA store). Do NOT
-# add deb/openjdk here — it would refuse every Alpine/distroless/Wolfi workload
+# add deb/openjdk here - it would refuse every Alpine/distroless/Wolfi workload
 # that the self-contained bundle runs on perfectly well. The silence is
 # deliberate.
 
 capabilities:
   # Build reaches the jar repo and the JRE mirror; the running agent reaches
-  # only the customer's Black Duck server. network-policy is phase-scoped — an
+  # only the customer's Black Duck server. network-policy is phase-scoped - an
   # absent phase grants nothing.
   - type: com.docker.sandbox/network-policy@1
     config:

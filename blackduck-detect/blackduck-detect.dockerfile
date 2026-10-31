@@ -4,7 +4,7 @@
 #
 # Everything is staged under /out in a build stage and copied into scratch, so
 # the layer lands on a filesystem we have never seen. We stage only under /opt
-# and /usr/local/bin — never /home — so the overlay stays out of the agent's
+# and /usr/local/bin - never /home - so the overlay stays out of the agent's
 # home and passes overlay-home-ownership without shipping either /home level.
 #
 # The build stage runs AS the target platform (no BUILDPLATFORM pin) so buildx
@@ -22,7 +22,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # --- Temurin JRE (relocatable; bundled so the overlay needs no Java on base) ---
-# A JRE tarball is self-contained — it carries no absolute-path assumptions, so
+# A JRE tarball is self-contained - it carries no absolute-path assumptions, so
 # copying it onto any base and pointing JAVA_HOME at it resolves inside the tree
 # it ships with. Verify by composing onto a base with no Java at all.
 RUN set -eux; \
@@ -42,7 +42,7 @@ RUN set -eux; \
 
 # --- Black Duck Detect jar (pinned) ---
 # The versioned URL IS the pin: repo.blackduck.com 404s on a nonexistent
-# version, so `curl -f` fails the build if DETECT_VERSION is wrong — the
+# version, so `curl -f` fails the build if DETECT_VERSION is wrong - the
 # provide can never claim a version the content does not have.
 RUN set -eux; \
     mkdir -p /out/opt/blackduck; \
@@ -50,7 +50,7 @@ RUN set -eux; \
       "https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/detect/${DETECT_VERSION}/detect-${DETECT_VERSION}.jar" \
       -o /out/opt/blackduck/detect.jar; \
     test -s /out/opt/blackduck/detect.jar; \
-    # A jar is a zip — confirm we got an archive, not an HTML error page.
+    # A jar is a zip - confirm we got an archive, not an HTML error page.
     head -c2 /out/opt/blackduck/detect.jar | grep -q 'PK'
 
 # --- detect launcher ---
@@ -60,14 +60,14 @@ RUN set -eux; \
     mkdir -p /out/usr/local/bin; \
     printf '%s\n' \
       '#!/bin/sh' \
-      '# Black Duck Detect launcher — runs the bundled jar with the bundled JRE.' \
+      '# Black Duck Detect launcher - runs the bundled jar with the bundled JRE.' \
       'exec "${JAVA_HOME:-/opt/blackduck/jre}/bin/java" -jar /opt/blackduck/detect.jar "$@"' \
       > /out/usr/local/bin/detect; \
     chmod 0755 /out/usr/local/bin/detect
 
 # Vendor tarballs preserve the publisher's uid/gid; normalize to root so no
 # foreign owner rides along into an unknown base. The agent needs none of this
-# tree to be writable — it only runs the launcher.
+# tree to be writable - it only runs the launcher.
 RUN chown -R 0:0 /out
 
 # --- The overlay: lands on any workload ---

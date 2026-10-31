@@ -1,7 +1,7 @@
 # sbx-kits-blackduck
 
 [Black Duck](https://www.blackduck.com/) AppSec kits for
-[Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) — authored against the
+[Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) - authored against the
 v3 kit descriptor (`schemaVersion: "3"`).
 
 These kits bring Black Duck's Application Security portfolio into sandboxed AI
@@ -17,8 +17,8 @@ leaving the sandbox.
 
 ## Why a mixin
 
-A mixin overlays onto *any* agent workload — Claude Code, Codex, Copilot,
-Gemini, or your own — so the same AppSec tooling drops into whatever agent the
+A mixin overlays onto *any* agent workload - Claude Code, Codex, Copilot,
+Gemini, or your own - so the same AppSec tooling drops into whatever agent the
 team already runs. The `blackduck-detect` overlay is fully self-contained
 (bundles its own Temurin JRE and the Detect jar), so it composes even onto a
 base that ships no Java, and its only runtime network reach is your Black Duck
@@ -42,9 +42,9 @@ run, and publish instructions.
 
 ## Requirements
 
-- [`docker buildx`](https://docs.docker.com/engine/reference/commandline/buildx/) — builds the kit (BuildKit pulls the v3 frontend from the `# syntax=` line).
-- [`sbx`](https://docs.docker.com/ai/sandboxes/install/) — runs and composes kits.
-- [`kit-tck`](https://github.com/docker/sandbox-kit-spec) — conformance checking: `go install github.com/docker/sandbox-kit-spec/v3/cmd/kit-tck@latest`.
+- [`docker buildx`](https://docs.docker.com/engine/reference/commandline/buildx/) - builds the kit (BuildKit pulls the v3 frontend from the `# syntax=` line).
+- [`sbx`](https://docs.docker.com/ai/sandboxes/install/) - runs and composes kits.
+- [`kit-tck`](https://github.com/docker/sandbox-kit-spec) - conformance checking: `go install github.com/docker/sandbox-kit-spec/v3/cmd/kit-tck@latest`.
 - A valid Black Duck SCA entitlement and server.
 
 ## License

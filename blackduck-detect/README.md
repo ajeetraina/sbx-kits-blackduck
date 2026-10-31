@@ -1,8 +1,8 @@
 # blackduck-detect
 
 A Docker Sandbox **mixin** (kit descriptor v3) that adds [Black Duck
-Detect](https://github.com/blackducksoftware/detect) — the Black Duck SCA
-scanner — to any agent workload.
+Detect](https://github.com/blackducksoftware/detect) - the Black Duck SCA
+scanner - to any agent workload.
 
 The overlay is self-contained: it bundles a relocatable Temurin JRE, the pinned
 Detect jar, and a `detect` launcher on `PATH`. It composes onto any workload,
@@ -21,11 +21,11 @@ Black Duck server.
 
 ### Capabilities
 
-- **network-policy@1** — `install` reaches `repo.blackduck.com` (the jar) and
+- **network-policy@1** - `install` reaches `repo.blackduck.com` (the jar) and
   the Adoptium JRE mirror; `runtime` reaches only your Black Duck host.
-- **credential@1** — injects the host `blackduck` credential as
+- **credential@1** - injects the host `blackduck` credential as
   `BLACKDUCK_API_TOKEN`. Required: Detect cannot run unauthenticated.
-- **agent-context@1** — tells the agent how to run a scan safely.
+- **agent-context@1** - tells the agent how to run a scan safely.
 
 ## Configuration
 
@@ -33,7 +33,7 @@ Black Duck server.
 |---|---|---|
 | `version` | `12.1.0` | Detect release to bundle |
 | `javaVersion` | `17` | Temurin JRE LTS feature version (`11`, `17`, `21`) |
-| `blackduckHost` | `blackduck.example.com` | Your Black Duck server host — **override this** |
+| `blackduckHost` | `blackduck.example.com` | Your Black Duck server host - **override this** |
 
 > The server host is baked into the egress policy and `BLACKDUCK_URL`, so it
 > must be set at build/compose time. The default is a placeholder.
@@ -49,7 +49,7 @@ under the service name `blackduck`, so sbx can inject it as
 ```sh
 cd blackduck-detect
 
-# validate the descriptor (fast — fails before any content is built)
+# validate the descriptor (fast - fails before any content is built)
 docker buildx build . -f blackduck-detect.yaml --output type=cacheonly
 
 # build an OCI layout for conformance checking
