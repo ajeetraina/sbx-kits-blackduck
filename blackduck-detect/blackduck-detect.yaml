@@ -1,0 +1,76 @@
+# syntax=docker/sandbox-kit:3
+schemaVersion: "3"
+kind: mixin
+displayName: Black Duck Detect
+description: >-
+  Black Duck Detect SCA scanner, bundled with a relocatable Temurin JRE so the
+  overlay runs on any agent workload. Drops `detect` on PATH for software
+  composition analysis against a Black Duck SCA (Hub) server.
+sourceUrl: https://github.com/blackducksoftware/detect
+# Detect is distributed under Black Duck's commercial EULA, not an OSI license.
+licenses: [LicenseRef-BlackDuck-Commercial]
+
+# One value drives the install URL, the provide and the published version/tag.
+version: "${{ kit.args.version }}"
+
+args:
+  version:
+    default: "12.1.0"
+    pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
+    description: Black Duck Detect release to bundle (served from repo.blackduck.com)
+    buildArg: DETECT_VERSION
+
+  javaVersion:
+    default: "17"
+    pattern: '^(11|17|21)$'
+    description: Temurin (Adoptium) JRE LTS feature version to bundle
+    buildArg: JAVA_FEATURE_VERSION
+
+  # The Black Duck server host is baked into the egress policy, so it must be
+  # known at build/compose time. Override this for your instance, e.g.
+  #   sbx run ./workload --kit ./blackduck-detect --kit-arg blackduck-detect.blackduckHost=bd.acme.com .
+  blackduckHost:
+    default: "blackduck.example.com"
+    pattern: '^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$'
+    description: Hostname of your Black Duck SCA (Hub) server, used for BLACKDUCK_URL and the runtime egress allow-list
+    buildArg: BLACKDUCK_HOST
+
+provides: ["blackduck-detect@${{ kit.args.version }}"]
+
+# No requires: the overlay bundles its own JRE and the Detect jar, so it needs
+# nothing from the base beyond the §12 platform floor (sh, a CA store). Do NOT
+# add deb/openjdk here — it would refuse every Alpine/distroless/Wolfi workload
+# that the self-contained bundle runs on perfectly well. The silence is
+# deliberate.
+
+capabilities:
+  # Build reaches the jar repo and the JRE mirror; the running agent reaches
+  # only the customer's Black Duck server. network-policy is phase-scoped — an
+  # absent phase grants nothing.
+  - type: com.docker.sandbox/network-policy@1
+    config:
+      install:
+        allow:
+          - repo.blackduck.com          # detect-<version>.jar
+          - api.adoptium.net            # Temurin JRE binary redirect
+          - github.com                  # Adoptium release asset redirect target
+          - objects.githubusercontent.com
+      runtime:
+        allow:
+          - "${{ kit.args.blackduckHost }}"
+
+  # Detect authenticates to the server itself (api-token -> bearer session), so
+  # the real token must live in the container as a plain env var. It is NOT
+  # proxy-managed: forcing an Authorization header on every request to the host
+  # would clobber Detect's bearer-authenticated calls. Populate the `blackduck`
+  # credential in your host store before composing.
+  - type: com.docker.sandbox/credential@1
+    config:
+      service: blackduck
+      phase: runtime
+      apiKey:
+        name: BLACKDUCK_API_TOKEN
+
+  - type: com.docker.sandbox/agent-context@1
+    config:
+      contentFile: ./blackduck-detect-context.md
