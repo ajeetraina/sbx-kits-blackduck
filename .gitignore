@@ -1,0 +1,7 @@
+.DS_Store
+.sbx/.env
+.sbx/*.env
+*.tar
+*.zip
+*.claude
+/tmp/

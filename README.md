@@ -40,6 +40,35 @@ detect --detect.source.path=.
 See [`blackduck-detect/README.md`](./blackduck-detect/README.md) for full build,
 run, and publish instructions.
 
+## Published image
+
+The kit is published to Docker Hub as a multi-platform (`linux/amd64`,
+`linux/arm64`) OCI artifact:
+
+```
+docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-detect
+docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-detect-12.1.0   # immutable
+docker.io/ajeetraina777/sbx-kits-blackduck:latest
+```
+
+Consume it straight from the registry, no local build:
+
+```sh
+sbx run ./<workload> \
+  --kit docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-detect \
+  --kit-arg blackduck-detect.blackduckHost=bd.acme.com \
+  .
+```
+
+Publishing is automated by [`.github/workflows/publish.yml`](./.github/workflows/publish.yml):
+it gates on `kit-tck` conformance, then runs [`scripts/push-kit.sh`](./scripts/push-kit.sh)
+to build and push both architectures in one invocation. It needs the
+`DOCKERHUB_USER` and `DOCKERHUB_PAT` repository secrets.
+
+> The published default bakes the placeholder `blackduck.example.com` host. For
+> your instance, either run the workflow manually (set `blackduckHost`) or
+> recompose locally with `--kit-arg blackduck-detect.blackduckHost=<your host>`.
+
 ## Requirements
 
 - [`docker buildx`](https://docs.docker.com/engine/reference/commandline/buildx/) - builds the kit (BuildKit pulls the v3 frontend from the `# syntax=` line).
@@ -49,5 +78,6 @@ run, and publish instructions.
 
 ## License
 
-The kit sources in this repository are MIT-licensed. Black Duck Detect itself is
-distributed under Black Duck's commercial EULA and is not relicensed here.
+The kit sources in this repository are Apache-2.0 licensed (see `LICENSE`).
+Black Duck Detect itself is distributed under Black Duck's commercial EULA and
+is not relicensed here.

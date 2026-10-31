@@ -1,0 +1,87 @@
+name: Publish Kit
+
+# Auto-publish the blackduck-detect v3 kit to Docker Hub when it changes on
+# main, and allow manual runs. A v3 kit is an OCI artifact and publishing IS
+# the build, so this uses `docker buildx build --push` (there is no
+# `sbx kit push` for v3). kit-tck gates the push: a kit that fails conformance
+# never reaches Docker Hub.
+#
+# Requires two repo secrets:
+#   DOCKERHUB_USER  - Docker Hub username (also the image namespace)
+#   DOCKERHUB_PAT   - Docker Hub access token with read/write on the repo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - blackduck-detect/**
+      - README.md
+      - scripts/**
+      - .github/workflows/publish.yml
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Detect version to build (kit arg `version`)
+        required: false
+        default: "12.1.0"
+      blackduckHost:
+        description: Black Duck server host baked into the egress policy
+        required: false
+        default: "blackduck.example.com"
+
+permissions:
+  contents: read
+
+jobs:
+  publish-kit:
+    runs-on: ubuntu-24.04
+    env:
+      KIT_DIR: blackduck-detect
+      # On a push event `inputs` is empty, so fall back to the baked defaults.
+      # Bump these alongside the kit's `version` arg default.
+      DETECT_VERSION: ${{ inputs.version || '12.1.0' }}
+      BLACKDUCK_HOST: ${{ inputs.blackduckHost || 'blackduck.example.com' }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - uses: docker/setup-qemu-action@v3
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Conformance gate: build a single-arch OCI layout and validate it before
+      # anything is pushed, so a kit that fails kit-tck never reaches Docker Hub.
+      - name: Conformance (kit-tck)
+        run: |
+          set -euxo pipefail
+          go install github.com/docker/sandbox-kit-spec/v3/cmd/kit-tck@latest
+          docker buildx build "$KIT_DIR" \
+            -f "$KIT_DIR/$KIT_DIR.yaml" \
+            --build-arg DETECT_VERSION="$DETECT_VERSION" \
+            --build-arg BLACKDUCK_HOST="$BLACKDUCK_HOST" \
+            --output type=oci,dest=/tmp/kit-layout,tar=false
+          "$(go env GOPATH)/bin/kit-tck" validate --layout /tmp/kit-layout "$DETECT_VERSION"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
+
+      - name: Publish kit artifact
+        env:
+          DOCKERHUB_NAMESPACE: ${{ secrets.DOCKERHUB_USER }}
+        run: bash ./scripts/push-kit.sh
+
+      - name: Sync Docker Hub overview page
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PAT }}
+          repository: ${{ secrets.DOCKERHUB_USER }}/sbx-kits-blackduck
+          readme-filepath: ./README.md
+          short-description: "Docker Sandboxes v3 mixin adding Black Duck Detect SCA scanning to any agent"
