@@ -12,7 +12,7 @@ leaving the sandbox.
 ## Architecture
 
 <p align="center">
-  <img src="./assets/architecture.png" alt="Black Duck AppSec kit for Docker Sandboxes architecture" width="100%">
+  <img src="./assets/architecture-diagram.png" alt="Black Duck AppSec kit for Docker Sandboxes architecture" width="100%">
 </p>
 
 At build time the kit bundles the Detect jar (`repo.blackduck.com`) and a
