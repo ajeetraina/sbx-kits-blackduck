@@ -26,6 +26,12 @@ baked into the image.
 | Kit | Kind | What it adds |
 |---|---|---|
 | [`blackduck-detect`](./blackduck-detect) | mixin | Black Duck **Detect** SCA scanner (`detect` on PATH), with a bundled JRE and pinned jar |
+| [`blackduck-bridge`](./blackduck-bridge) | mixin | Black Duck **Bridge CLI** (`bridge-cli` on PATH) — the unified orchestrator for Black Duck SCA, Coverity, Polaris, and SRM scans, from the self-contained bundle |
+
+**Detect or Bridge?** `blackduck-detect` is the focused SCA scanner.
+`blackduck-bridge` is the pipeline-style orchestrator that *drives* Detect for
+its SCA stage and additionally fronts Coverity, Polaris, and SRM — pick it when
+you want the single `bridge-cli` entry point or the other scan stages.
 
 ## Why a mixin
 
@@ -103,7 +109,9 @@ The kit is published to Docker Hub as a multi-platform (`linux/amd64`,
 ```
 docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-detect
 docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-detect-12.1.0   # immutable
-docker.io/ajeetraina777/sbx-kits-blackduck:latest
+docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-bridge
+docker.io/ajeetraina777/sbx-kits-blackduck:blackduck-bridge-4.6.0    # immutable
+docker.io/ajeetraina777/sbx-kits-blackduck:latest                   # tracks blackduck-detect
 ```
 
 Consume it straight from the registry, no local build:

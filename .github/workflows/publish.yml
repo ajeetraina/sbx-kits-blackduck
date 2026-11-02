@@ -1,10 +1,10 @@
 name: Publish Kit
 
-# Auto-publish the blackduck-detect v3 kit to Docker Hub when it changes on
-# main, and allow manual runs. A v3 kit is an OCI artifact and publishing IS
-# the build, so this uses `docker buildx build --push` (there is no
-# `sbx kit push` for v3). kit-tck gates the push: a kit that fails conformance
-# never reaches Docker Hub.
+# Auto-publish the v3 kits in this repo (blackduck-detect, blackduck-bridge) to
+# Docker Hub when they change on main, and allow manual runs. A v3 kit is an OCI
+# artifact and publishing IS the build, so this uses `docker buildx build
+# --push` (there is no `sbx kit push` for v3). kit-tck gates every push: a kit
+# that fails conformance never reaches Docker Hub.
 #
 # Requires two repo secrets:
 #   DOCKERHUB_USER  - Docker Hub username (also the image namespace)
@@ -15,15 +15,12 @@ on:
     branches: [main]
     paths:
       - blackduck-detect/**
+      - blackduck-bridge/**
       - README.md
       - scripts/**
       - .github/workflows/publish.yml
   workflow_dispatch:
     inputs:
-      version:
-        description: Detect version to build (kit arg `version`)
-        required: false
-        default: "12.1.0"
       blackduckHost:
         description: Black Duck server host baked into the egress policy
         required: false
@@ -35,11 +32,21 @@ permissions:
 jobs:
   publish-kit:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Bump `version` here alongside each kit's `version` arg default.
+          - kit: blackduck-detect
+            version: "12.1.0"
+            version_arg: DETECT_VERSION
+          - kit: blackduck-bridge
+            version: "4.6.0"
+            version_arg: BRIDGE_VERSION
     env:
-      KIT_DIR: blackduck-detect
-      # On a push event `inputs` is empty, so fall back to the baked defaults.
-      # Bump these alongside the kit's `version` arg default.
-      DETECT_VERSION: ${{ inputs.version || '12.1.0' }}
+      KIT_DIR: ${{ matrix.kit }}
+      KIT_VERSION: ${{ matrix.version }}
+      VERSION_ARG: ${{ matrix.version_arg }}
       BLACKDUCK_HOST: ${{ inputs.blackduckHost || 'blackduck.example.com' }}
     steps:
       - name: Check out repository
@@ -63,11 +70,11 @@ jobs:
           # kit-tck resolves that tag out of the layout (the last arg below).
           docker buildx build "$KIT_DIR" \
             -f "$KIT_DIR/$KIT_DIR.yaml" \
-            -t "$KIT_DIR:$DETECT_VERSION" \
-            --build-arg DETECT_VERSION="$DETECT_VERSION" \
+            -t "$KIT_DIR:$KIT_VERSION" \
+            --build-arg "$VERSION_ARG=$KIT_VERSION" \
             --build-arg BLACKDUCK_HOST="$BLACKDUCK_HOST" \
             --output type=oci,dest=/tmp/kit-layout,tar=false
-          "$(go env GOPATH)/bin/kit-tck" validate --layout /tmp/kit-layout "$DETECT_VERSION"
+          "$(go env GOPATH)/bin/kit-tck" validate --layout /tmp/kit-layout "$KIT_VERSION"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -78,13 +85,16 @@ jobs:
       - name: Publish kit artifact
         env:
           DOCKERHUB_NAMESPACE: ${{ secrets.DOCKERHUB_USER }}
+          KIT_NAME: ${{ matrix.kit }}
         run: bash ./scripts/push-kit.sh
 
+      # Sync the overview page once, from the primary kit's job only.
       - name: Sync Docker Hub overview page
+        if: matrix.kit == 'blackduck-detect'
         uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_PAT }}
           repository: ${{ secrets.DOCKERHUB_USER }}/sbx-kits-blackduck
           readme-filepath: ./README.md
-          short-description: "Docker Sandboxes v3 mixin adding Black Duck Detect SCA scanning to any agent"
+          short-description: "Docker Sandboxes v3 mixins adding Black Duck Detect & Bridge scanning to any agent"
