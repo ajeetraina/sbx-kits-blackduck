@@ -32,46 +32,46 @@
   <text x="62" y="150" font-size="15" font-weight="700" fill="#3a4a66" letter-spacing="1">DEVELOPER HOST</text>
 
   <!-- host services (left column) -->
-  <rect x="66" y="200" width="232" height="86" rx="12" fill="#ffffff" stroke="#c7d2ea" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="86" y="234" font-size="18" font-weight="700" fill="#0b1b3a">sbx CLI</text>
-  <text x="86" y="260" font-size="13.5" fill="#5b6472">composes + runs the kit</text>
+  <rect x="56" y="200" width="210" height="86" rx="12" fill="#ffffff" stroke="#c7d2ea" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="76" y="234" font-size="18" font-weight="700" fill="#0b1b3a">sbx CLI</text>
+  <text x="76" y="260" font-size="13" fill="#5b6472">composes + runs the kit</text>
 
-  <rect x="66" y="310" width="232" height="86" rx="12" fill="#ffffff" stroke="#c7d2ea" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="86" y="344" font-size="18" font-weight="700" fill="#0b1b3a">Credential store</text>
-  <text x="86" y="370" font-size="13.5" fill="#5b6472">service: blackduck</text>
+  <rect x="56" y="310" width="210" height="86" rx="12" fill="#ffffff" stroke="#c7d2ea" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="76" y="344" font-size="18" font-weight="700" fill="#0b1b3a">Credential store</text>
+  <text x="76" y="370" font-size="13" fill="#5b6472">service: blackduck</text>
 
   <!-- ===== Sandbox microVM (nested inside host) ===== -->
-  <rect x="330" y="175" width="575" height="470" rx="16" fill="#e9f7f1" stroke="#bfe6d6" stroke-width="1.5"/>
-  <text x="352" y="206" font-size="14.5" font-weight="700" fill="#1f7a56" letter-spacing="0.5">SANDBOX microVM  ·  composed kit image</text>
+  <rect x="360" y="175" width="545" height="470" rx="16" fill="#e9f7f1" stroke="#bfe6d6" stroke-width="1.5"/>
+  <text x="382" y="206" font-size="14.5" font-weight="700" fill="#1f7a56" letter-spacing="0.5">SANDBOX microVM  ·  composed kit image</text>
 
   <!-- workload -->
-  <rect x="352" y="222" width="531" height="62" rx="12" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="372" y="250" font-size="18" font-weight="700" fill="#0b1b3a">v3 workload</text>
-  <text x="372" y="271" font-size="13.5" fill="#5b6472">AI coding agent / shell</text>
+  <rect x="382" y="222" width="501" height="62" rx="12" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="402" y="250" font-size="18" font-weight="700" fill="#0b1b3a">v3 workload</text>
+  <text x="402" y="271" font-size="13" fill="#5b6472">AI coding agent / shell</text>
 
   <!-- mixin overlay -->
-  <rect x="352" y="298" width="531" height="248" rx="14" fill="#f6fffb" stroke="#39b587" stroke-width="2" stroke-dasharray="6 5"/>
-  <text x="372" y="324" font-size="14" font-weight="700" fill="#1f7a56" letter-spacing="0.5">blackduck-detect mixin  (overlay)</text>
+  <rect x="382" y="298" width="501" height="248" rx="14" fill="#f6fffb" stroke="#39b587" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="402" y="324" font-size="14" font-weight="700" fill="#1f7a56" letter-spacing="0.5">blackduck-detect mixin  (overlay)</text>
 
-  <rect x="372" y="336" width="491" height="52" rx="10" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5"/>
-  <text x="392" y="360" font-size="15" font-weight="700" fill="#0b1b3a">detect</text>
-  <text x="392" y="378" font-size="12.5" fill="#5b6472">/usr/local/bin/detect launcher on PATH</text>
+  <rect x="402" y="336" width="461" height="52" rx="10" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5"/>
+  <text x="422" y="360" font-size="15" font-weight="700" fill="#0b1b3a">detect</text>
+  <text x="422" y="378" font-size="12.5" fill="#5b6472">/usr/local/bin/detect launcher on PATH</text>
 
-  <rect x="372" y="400" width="235" height="46" rx="10" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5"/>
-  <text x="390" y="420" font-size="14" font-weight="700" fill="#0b1b3a">detect.jar</text>
-  <text x="390" y="438" font-size="12" fill="#5b6472">Detect 12.1.0</text>
+  <rect x="402" y="400" width="220" height="46" rx="10" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5"/>
+  <text x="420" y="420" font-size="14" font-weight="700" fill="#0b1b3a">detect.jar</text>
+  <text x="420" y="438" font-size="12" fill="#5b6472">Detect 12.1.0</text>
 
-  <rect x="628" y="400" width="235" height="46" rx="10" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5"/>
-  <text x="646" y="420" font-size="14" font-weight="700" fill="#0b1b3a">jre</text>
-  <text x="646" y="438" font-size="12" fill="#5b6472">bundled Temurin 17</text>
+  <rect x="643" y="400" width="220" height="46" rx="10" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5"/>
+  <text x="661" y="420" font-size="14" font-weight="700" fill="#0b1b3a">jre</text>
+  <text x="661" y="438" font-size="12" fill="#5b6472">bundled Temurin 17</text>
 
-  <rect x="372" y="460" width="491" height="42" rx="10" fill="#fff8ec" stroke="#f0cf8a" stroke-width="1.5"/>
-  <text x="390" y="486" font-size="12.5" fill="#8a6d2f">env: BLACKDUCK_URL · BLACKDUCK_API_TOKEN (injected)</text>
+  <rect x="402" y="460" width="461" height="42" rx="10" fill="#fff8ec" stroke="#f0cf8a" stroke-width="1.5"/>
+  <text x="420" y="486" font-size="12.5" fill="#8a6d2f">env: BLACKDUCK_URL · BLACKDUCK_API_TOKEN (injected)</text>
 
   <!-- mounted workspace -->
-  <rect x="352" y="562" width="531" height="62" rx="12" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5" filter="url(#shadow)"/>
-  <text x="372" y="590" font-size="18" font-weight="700" fill="#0b1b3a">Mounted workspace</text>
-  <text x="372" y="611" font-size="13.5" fill="#5b6472">your code to scan</text>
+  <rect x="382" y="562" width="501" height="62" rx="12" fill="#ffffff" stroke="#bfe6d6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="402" y="590" font-size="18" font-weight="700" fill="#0b1b3a">Mounted workspace</text>
+  <text x="402" y="611" font-size="13" fill="#5b6472">your code to scan</text>
 
   <!-- ===== egress proxy at host boundary ===== -->
   <rect x="935" y="300" width="200" height="120" rx="14" fill="#ffffff" stroke="#c7d2ea" stroke-width="1.5" filter="url(#shadow)"/>
@@ -95,20 +95,20 @@
 
   <!-- ===== Arrows ===== -->
   <!-- sbx composes/runs the microVM -->
-  <path d="M298,241 L326,236" fill="none" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="300" y="196" font-size="12.5" fill="#5b6472">compose + run</text>
+  <path d="M266,242 L357,238" fill="none" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="274" y="226" font-size="12.5" fill="#5b6472">compose + run</text>
 
   <!-- credential injects token into env -->
-  <path d="M298,353 C 330,382 330,470 368,481" fill="none" stroke="#c99a2e" stroke-width="2" marker-end="url(#arrowGold)"/>
-  <text x="304" y="420" font-size="12.5" fill="#c99a2e">inject token</text>
+  <path d="M266,353 C 324,372 344,480 400,483" fill="none" stroke="#c99a2e" stroke-width="2" marker-end="url(#arrowGold)"/>
+  <text x="274" y="406" font-size="12.5" fill="#c99a2e">inject token</text>
 
   <!-- detect scans workspace -->
-  <path d="M384,388 C 360,460 360,520 372,558" fill="none" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="332" y="490" font-size="12.5" fill="#5b6472">scan</text>
+  <path d="M414,388 C 388,460 388,522 400,558" fill="none" stroke="#5b6472" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="364" y="492" font-size="12.5" fill="#5b6472">scan</text>
 
   <!-- microVM egress -> proxy -->
   <path d="M905,360 L931,360" fill="none" stroke="#1f7a56" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
-  <text x="893" y="348" font-size="12.5" fill="#1f7a56">HTTPS</text>
+  <text x="893" y="350" font-size="12.5" fill="#1f7a56">HTTPS</text>
 
   <!-- proxy -> Black Duck (leaves host) -->
   <path d="M1135,360 L1206,360" fill="none" stroke="#1f7a56" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
