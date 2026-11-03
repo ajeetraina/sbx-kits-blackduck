@@ -1,4 +1,4 @@
-# Docker Sandbox Kits for Black Duck
+# Docker Sandbox Kits for Black Duck AppSec
 
 [Black Duck](https://www.blackduck.com/) AppSec kits for
 [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) - authored against the
